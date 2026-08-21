@@ -830,2578 +830,6 @@ function resumeSoon(){
 }
 </script>
 </body>
-</html>    border-radius:14px;
-    padding:18px;
-    margin-bottom:16px;
-  }
-  .row{display:flex; gap:10px;}
-  input[type=text]{
-    flex:1;
-    background:var(--card-2);
-    border:1px solid var(--line);
-    color:var(--text);
-    padding:12px 14px;
-    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
-    return;
-  }
-  data.people = rows || [];
-}
-
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    const bigBtn = document.createElement('button');
-    bigBtn.className = 'ghost';
-    bigBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-    bigBtn.textContent = 'تكبير';
-    bigBtn.addEventListener('click', ()=>showBigQR(p.id, p.name));
-    actions.appendChild(bigBtn);
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-function showBigQR(id, name){
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed; inset:0; background:#fff; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;';
-  const title = document.createElement('div');
-  title.style.cssText = 'color:#0F1B2B; font-family:Tajawal,sans-serif; font-weight:800; font-size:1.3rem;';
-  title.textContent = name;
-  overlay.appendChild(title);
-  const qrBox = document.createElement('div');
-  overlay.appendChild(qrBox);
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'إغلاق';
-  closeBtn.style.cssText = 'background:#0F1B2B; color:#E8B454; border:none; padding:12px 30px; border-radius:10px; font-family:Tajawal,sans-serif; font-weight:700; font-size:1rem;';
-  closeBtn.addEventListener('click', ()=>overlay.remove());
-  overlay.appendChild(closeBtn);
-  document.body.appendChild(overlay);
-  new QRCode(qrBox, { text: id, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M });
-}
-
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
-  if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  const idx = sorted.findIndex(p => p.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  if(typeof jsQR !== 'function'){
-    document.getElementById('scanResult').innerHTML =
-      '<div class="result-flash err"><div class="lbl">مكتبة قراءة الكود مانزلتش صح من الإنترنت. اتأكد إنك متصل بالنت وحدّث الصفحة.</div></div>';
-    return;
-  }
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  try{
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    if(video.readyState === video.HAVE_ENOUGH_DATA){
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
-      if(code && code.data){
-        handleScan(code.data.trim());
-        return;
-      }
-    }
-  }catch(e){
-    console.error('scan tick error', e);
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
-  const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html>  input[type=text]{
-    flex:1;
-    background:var(--card-2);
-    border:1px solid var(--line);
-    color:var(--text);
-    padding:12px 14px;
-    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
-    return;
-  }
-  data.people = rows || [];
-}
-
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    const bigBtn = document.createElement('button');
-    bigBtn.className = 'ghost';
-    bigBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-    bigBtn.textContent = 'تكبير';
-    bigBtn.addEventListener('click', ()=>showBigQR(p.id, p.name));
-    actions.appendChild(bigBtn);
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-function showBigQR(id, name){
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed; inset:0; background:#fff; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;';
-  const title = document.createElement('div');
-  title.style.cssText = 'color:#0F1B2B; font-family:Tajawal,sans-serif; font-weight:800; font-size:1.3rem;';
-  title.textContent = name;
-  overlay.appendChild(title);
-  const qrBox = document.createElement('div');
-  overlay.appendChild(qrBox);
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'إغلاق';
-  closeBtn.style.cssText = 'background:#0F1B2B; color:#E8B454; border:none; padding:12px 30px; border-radius:10px; font-family:Tajawal,sans-serif; font-weight:700; font-size:1rem;';
-  closeBtn.addEventListener('click', ()=>overlay.remove());
-  overlay.appendChild(closeBtn);
-  document.body.appendChild(overlay);
-  new QRCode(qrBox, { text: id, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M });
-}
-
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
-  if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  const idx = sorted.findIndex(p => p.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  if(typeof jsQR !== 'function'){
-    document.getElementById('scanResult').innerHTML =
-      '<div class="result-flash err"><div class="lbl">مكتبة قراءة الكود مانزلتش صح من الإنترنت. اتأكد إنك متصل بالنت وحدّث الصفحة.</div></div>';
-    return;
-  }
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  try{
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    if(video.readyState === video.HAVE_ENOUGH_DATA){
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
-      if(code && code.data){
-        handleScan(code.data.trim());
-        return;
-      }
-    }
-  }catch(e){
-    console.error('scan tick error', e);
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
-  const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html>
-    padding:12px 14px;
-    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
-    return;
-  }
-  data.people = rows || [];
-}
-
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    const bigBtn = document.createElement('button');
-    bigBtn.className = 'ghost';
-    bigBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-    bigBtn.textContent = 'تكبير';
-    bigBtn.addEventListener('click', ()=>showBigQR(p.id, p.name));
-    actions.appendChild(bigBtn);
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-function showBigQR(id, name){
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed; inset:0; background:#fff; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;';
-  const title = document.createElement('div');
-  title.style.cssText = 'color:#0F1B2B; font-family:Tajawal,sans-serif; font-weight:800; font-size:1.3rem;';
-  title.textContent = name;
-  overlay.appendChild(title);
-  const qrBox = document.createElement('div');
-  overlay.appendChild(qrBox);
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'إغلاق';
-  closeBtn.style.cssText = 'background:#0F1B2B; color:#E8B454; border:none; padding:12px 30px; border-radius:10px; font-family:Tajawal,sans-serif; font-weight:700; font-size:1rem;';
-  closeBtn.addEventListener('click', ()=>overlay.remove());
-  overlay.appendChild(closeBtn);
-  document.body.appendChild(overlay);
-  new QRCode(qrBox, { text: id, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M });
-}
-
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
-  if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  const idx = sorted.findIndex(p => p.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  if(typeof jsQR !== 'function'){
-    document.getElementById('scanResult').innerHTML =
-      '<div class="result-flash err"><div class="lbl">مكتبة قراءة الكود مانزلتش صح من الإنترنت. اتأكد إنك متصل بالنت وحدّث الصفحة.</div></div>';
-    return;
-  }
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  try{
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    if(video.readyState === video.HAVE_ENOUGH_DATA){
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
-      if(code && code.data){
-        handleScan(code.data.trim());
-        return;
-      }
-    }
-  }catch(e){
-    console.error('scan tick error', e);
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
-  const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html>
-    padding:12px 14px;
-    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-    overflow:hidden;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
-    return;
-  }
-  data.people = rows || [];
-}
-
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    const bigBtn = document.createElement('button');
-    bigBtn.className = 'ghost';
-    bigBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-    bigBtn.textContent = 'تكبير';
-    bigBtn.addEventListener('click', ()=>showBigQR(p.id, p.name));
-    actions.appendChild(bigBtn);
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-function showBigQR(id, name){
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed; inset:0; background:#fff; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;';
-  const title = document.createElement('div');
-  title.style.cssText = 'color:#0F1B2B; font-family:Tajawal,sans-serif; font-weight:800; font-size:1.3rem;';
-  title.textContent = name;
-  overlay.appendChild(title);
-  const qrBox = document.createElement('div');
-  overlay.appendChild(qrBox);
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'إغلاق';
-  closeBtn.style.cssText = 'background:#0F1B2B; color:#E8B454; border:none; padding:12px 30px; border-radius:10px; font-family:Tajawal,sans-serif; font-weight:700; font-size:1rem;';
-  closeBtn.addEventListener('click', ()=>overlay.remove());
-  overlay.appendChild(closeBtn);
-  document.body.appendChild(overlay);
-  new QRCode(qrBox, { text: id, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M });
-}
-
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
-  if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  const idx = sorted.findIndex(p => p.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  if(typeof jsQR !== 'function'){
-    document.getElementById('scanResult').innerHTML =
-      '<div class="result-flash err"><div class="lbl">مكتبة قراءة الكود مانزلتش صح من الإنترنت. اتأكد إنك متصل بالنت وحدّث الصفحة.</div></div>';
-    return;
-  }
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  try{
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    if(video.readyState === video.HAVE_ENOUGH_DATA){
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
-      if(code && code.data){
-        handleScan(code.data.trim());
-        return;
-      }
-    }
-  }catch(e){
-    console.error('scan tick error', e);
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
-  const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html>
-    padding:12px 14px;
-    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-    overflow:hidden;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
-    return;
-  }
-  data.people = rows || [];
-}
-
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
-  if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
-}
-
-function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  const idx = sorted.findIndex(p => p.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  if(video.readyState === video.HAVE_ENOUGH_DATA){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height);
-    if(code && code.data){
-      handleScan(code.data);
-      return;
-    }
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
-  const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
 </html><!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3411,7 +839,17 @@ load().then(()=>{ renderPeople(); renderRank(); });
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+  if(typeof jsQR === 'undefined'){
+    document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"><\/scr'+'ipt>');
+  }
+</script>
+<script>
+  if(typeof jsQR === 'undefined'){
+    document.write('<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"><\/scr'+'ipt>');
+  }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
@@ -3461,24 +899,39 @@ load().then(()=>{ renderPeople(); renderRank(); });
     color:var(--muted);
     font-size:.9rem;
   }
+  header .logout{
+    position:absolute;
+    left:14px;
+    top:14px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:7px 12px;
+    border-radius:8px;
+    font-family:inherit;
+    font-size:.75rem;
+    cursor:pointer;
+  }
 
   nav{
     display:flex;
+    flex-wrap:wrap;
     gap:8px;
     padding:14px 16px;
     max-width:640px;
     margin:0 auto;
   }
   nav button{
-    flex:1;
+    flex:1 1 calc(50% - 4px);
+    min-width:120px;
     background:var(--card);
     border:1px solid var(--line);
     color:var(--muted);
-    padding:11px 8px;
+    padding:11px 6px;
     border-radius:10px;
     font-family:inherit;
     font-weight:700;
-    font-size:.85rem;
+    font-size:.8rem;
     cursor:pointer;
     transition:.15s;
   }
@@ -3504,7 +957,7 @@ load().then(()=>{ renderPeople(); renderRank(); });
     margin-bottom:16px;
   }
   .row{display:flex; gap:10px;}
-  input[type=text]{
+  input[type=text], input[type=email], input[type=password]{
     flex:1;
     background:var(--card-2);
     border:1px solid var(--line);
@@ -3513,8 +966,11 @@ load().then(()=>{ renderPeople(); renderRank(); });
     border-radius:10px;
     font-family:inherit;
     font-size:1rem;
+    width:100%;
   }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
+  input:focus{outline:2px solid var(--gold); outline-offset:1px;}
+  label{display:block; color:var(--muted); font-size:.8rem; margin:12px 0 6px;}
+  label:first-child{margin-top:0;}
   button.primary{
     background:var(--gold);
     color:#22190A;
@@ -3548,7 +1004,6 @@ load().then(()=>{ renderPeople(); renderRank(); });
     padding:12px;
     margin-bottom:10px;
     position:relative;
-    overflow:hidden;
   }
   .ticket .qrbox{
     background:#fff;
@@ -3628,1226 +1083,467 @@ load().then(()=>{ renderPeople(); renderRank(); });
     text-align:center;
     color:var(--gold);
   }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
   .rank-row .nm{flex:1; font-weight:600;}
   .rank-row .tm{color:var(--muted); font-size:.75rem;}
 
   .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
   .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
   .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
+  .error-box{background:#231A1A; border:1px solid var(--red); color:#F0B3B3; padding:10px 14px; border-radius:10px; font-size:.85rem; margin-top:10px;}
+
+  .role-pill{
+    display:inline-block;
+    padding:2px 10px;
+    border-radius:999px;
+    font-size:.7rem;
+    font-weight:700;
+  }
+  .role-pill.admin{background:var(--gold); color:#22190A;}
+  .role-pill.user{background:var(--card-2); color:var(--muted); border:1px solid var(--line);}
+
+  .mycard{
+    text-align:center;
+    padding:30px 20px;
+  }
+  .mycard .qrwrap{
+    background:#fff;
+    display:inline-block;
+    padding:16px;
+    border-radius:16px;
+    margin:18px 0;
+  }
+  .mycard .name{font-size:1.4rem; font-weight:900;}
+  .mycard .statusline{margin-top:6px; font-size:1rem;}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <header>
+    <h1>تسجيل الحضور</h1>
+    <p>سجّل دخولك أو اعمل حساب جديد</p>
+  </header>
+  <main>
     <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
+      <div class="row" style="margin-bottom:14px;">
+        <button class="primary" id="tabLoginBtn" style="flex:1;">تسجيل الدخول</button>
+        <button class="ghost" id="tabSignupBtn" style="flex:1;">حساب جديد</button>
       </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
 
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
+      <div id="loginForm">
+        <label>الإيميل</label>
+        <input type="email" id="loginEmail" placeholder="example@mail.com">
+        <label>كلمة السر</label>
+        <input type="password" id="loginPassword" placeholder="••••••••">
+        <button class="primary" id="loginBtn" style="width:100%; margin-top:16px; padding:12px;">دخول</button>
       </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
+
+      <div id="signupForm" style="display:none;">
+        <label>اسمك</label>
+        <input type="text" id="signupName" placeholder="اكتب اسمك">
+        <label>الإيميل</label>
+        <input type="email" id="signupEmail" placeholder="example@mail.com">
+        <label>كلمة السر</label>
+        <input type="password" id="signupPassword" placeholder="6 حروف على الأقل">
+        <button class="primary" id="signupBtn" style="width:100%; margin-top:16px; padding:12px;">إنشاء الحساب</button>
+      </div>
+
+      <div id="authError" style="display:none;" class="error-box"></div>
+    </div>
+  </main>
+</div>
+
+<!-- APP SCREEN -->
+<div id="appScreen" style="display:none;">
+  <header>
+    <button class="logout" id="logoutBtn">خروج</button>
+    <h1>تسجيل الحضور</h1>
+    <p id="welcomeLine"></p>
+  </header>
+
+  <!-- USER VIEW -->
+  <main id="userView" style="display:none;">
+    <div class="card mycard">
+      <div class="name" id="myName"></div>
+      <div class="role-pill user">مستخدم</div>
+      <div class="qrwrap" id="myQr"></div>
+      <div class="statusline" id="myStatus"></div>
+    </div>
+  </main>
+
+  <!-- ADMIN VIEW -->
+  <div id="adminView" style="display:none;">
+    <nav>
+      <button data-tab="scan" class="active">مسح QR</button>
+      <button data-tab="users">المستخدمين</button>
+      <button data-tab="attendance">الحضور</button>
+      <button data-tab="rank">الترتيب</button>
+    </nav>
+    <main>
+
+      <!-- SCAN -->
+      <section class="panel active" id="panel-scan">
+        <div class="card scan-center">
+          <div id="scanArea">
+            <video id="video" playsinline muted></video>
+            <div class="frame"></div>
+          </div>
+          <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
+          <p class="hint">وجّه الكاميرا على كود المستخدم، هيتقرا لوحده أول ما يبان واضح.</p>
+          <canvas id="canvas" style="display:none;"></canvas>
         </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
+        <div id="scanResult"></div>
+      </section>
 
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
+      <!-- USERS (admin management) -->
+      <section class="panel" id="panel-users">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:0;">كل المستخدمين</div>
+          <p class="hint">من هنا تقدر ترقّي أي حد لأدمن، أو ترجّعه مستخدم عادي، أو تشيله.</p>
+        </div>
+        <div id="usersList"></div>
+      </section>
 
-</main>
+      <!-- ATTENDANCE -->
+      <section class="panel" id="panel-attendance">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:0;">إدارة الحضور يدويًا</div>
+          <p class="hint">لو حد نسي الكود بتاعه أو الكاميرا معملتش، سجّل حضوره من هنا مباشرة.</p>
+        </div>
+        <div class="card" style="padding:6px 14px;">
+          <div id="attendanceList"></div>
+        </div>
+      </section>
+
+      <!-- RANKING -->
+      <section class="panel" id="panel-rank">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
+        </div>
+        <div class="card" style="padding:6px 14px;">
+          <div id="rankList"></div>
+        </div>
+        <button class="ghost" id="refreshRank">تحديث</button>
+      </section>
+
+    </main>
+  </div>
+</div>
 
 <script>
 const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
+let currentUser = null;    // auth user
+let myProfile = null;      // row from profiles for the logged-in user
+let allProfiles = [];      // admin-only: everyone
 
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function escapeHtml(s){
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function showError(el, msg){
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideError(el){ el.style.display = 'none'; }
 
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
+// ---------- AUTH UI ----------
+document.getElementById('tabLoginBtn').addEventListener('click', ()=>{
+  document.getElementById('loginForm').style.display = '';
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('tabLoginBtn').className = 'primary';
+  document.getElementById('tabSignupBtn').className = 'ghost';
+});
+document.getElementById('tabSignupBtn').addEventListener('click', ()=>{
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('signupForm').style.display = '';
+  document.getElementById('tabSignupBtn').className = 'primary';
+  document.getElementById('tabLoginBtn').className = 'ghost';
+});
+
+document.getElementById('loginBtn').addEventListener('click', async ()=>{
+  const errEl = document.getElementById('authError');
+  hideError(errEl);
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if(!email || !password){ showError(errEl, 'اكتب الإيميل وكلمة السر'); return; }
+  const { error } = await db.auth.signInWithPassword({ email, password });
+  if(error){ showError(errEl, 'خطأ: ' + error.message); return; }
+  await bootAfterLogin();
+});
+
+document.getElementById('signupBtn').addEventListener('click', async ()=>{
+  const errEl = document.getElementById('authError');
+  hideError(errEl);
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  if(!name || !email || !password){ showError(errEl, 'املأ كل الحقول'); return; }
+  if(password.length < 6){ showError(errEl, 'كلمة السر لازم تكون 6 حروف على الأقل'); return; }
+  const { error } = await db.auth.signUp({ email, password, options: { data: { name } } });
+  if(error){ showError(errEl, 'خطأ: ' + error.message); return; }
+  await bootAfterLogin();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  await db.auth.signOut();
+  location.reload();
+});
+
+// ---------- BOOT ----------
+async function bootAfterLogin(){
+  const { data: { user } } = await db.auth.getUser();
+  if(!user){
+    document.getElementById('authError') && showError(document.getElementById('authError'), 'محتاج تأكيد الإيميل الأول لو التأكيد مفعّل من الإعدادات.');
     return;
   }
-  data.people = rows || [];
-}
+  currentUser = user;
 
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
+  let { data: profile, error } = await db.from('profiles').select('*').eq('id', user.id).single();
+  if(error || !profile){
+    // profile may not have been created yet by the trigger (rare timing) - retry once
+    await new Promise(r=>setTimeout(r, 800));
+    const retry = await db.from('profiles').select('*').eq('id', user.id).single();
+    profile = retry.data;
+  }
+  if(!profile){
+    showError(document.getElementById('authError'), 'حصلت مشكلة في تجهيز حسابك، حدّث الصفحة وجرب تسجل دخول تاني.');
     return;
   }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
+  myProfile = profile;
+
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = '';
+  document.getElementById('welcomeLine').textContent = `أهلاً ${myProfile.name || myProfile.email}`;
+
+  if(myProfile.role === 'admin'){
+    document.getElementById('adminView').style.display = '';
+    document.getElementById('userView').style.display = 'none';
+    await loadAllProfiles();
+    renderAdminAll();
+  }else{
+    document.getElementById('userView').style.display = '';
+    document.getElementById('adminView').style.display = 'none';
+    renderMyCard();
+  }
 }
 
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
+async function checkExistingSession(){
+  const { data: { session } } = await db.auth.getSession();
+  if(session){ await bootAfterLogin(); }
+}
+checkExistingSession();
+
+// ---------- USER VIEW ----------
+function renderMyCard(){
+  document.getElementById('myName').textContent = myProfile.name || myProfile.email;
+  const qrEl = document.getElementById('myQr');
+  qrEl.innerHTML = '';
+  new QRCode(qrEl, { text: myProfile.id, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+  const statusEl = document.getElementById('myStatus');
+  if(myProfile.scanned_at){
+    statusEl.innerHTML = `<span style="color:var(--green); font-weight:800;">حضرت ✓</span>`;
+  }else{
+    statusEl.innerHTML = `<span style="color:var(--muted);">لسه ما حضرتش — ورّي الكود ده للأدمن</span>`;
+  }
 }
 
-async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
+// refresh my own status periodically (in case admin scans me while I'm looking at my card)
+setInterval(async ()=>{
+  if(myProfile && myProfile.role === 'user'){
+    const { data: p } = await db.from('profiles').select('*').eq('id', myProfile.id).single();
+    if(p){ myProfile = p; renderMyCard(); }
+  }
+}, 6000);
+
+// ---------- ADMIN: DATA ----------
+async function loadAllProfiles(){
+  const { data: rows, error } = await db.from('profiles').select('*').order('created_at', { ascending: true });
   if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
+  allProfiles = rows || [];
+}
+
+function renderAdminAll(){
+  renderUsers();
+  renderAttendance();
+  renderRank();
 }
 
 function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
+  const sorted = allProfiles.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
   const idx = sorted.findIndex(p => p.id === id);
   return idx === -1 ? null : idx + 1;
 }
 
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function actionButtonsFor(p){
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap;';
+  const btn = document.createElement('button');
+  btn.className = 'ghost';
+  btn.style.cssText = 'font-size:.75rem; padding:7px 12px; white-space:nowrap;';
+  if(p.scanned_at){
+    btn.textContent = 'إعادة المسح';
+    btn.addEventListener('click', ()=>resetScan(p.id));
+  }else{
+    btn.textContent = 'مسح ✓';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    btn.addEventListener('click', ()=>manualScan(p.id));
+  }
+  wrap.appendChild(btn);
+  if(p.id !== myProfile.id){
+    const delBtn = document.createElement('button');
+    delBtn.className = 'ghost';
+    delBtn.style.cssText = 'font-size:.75rem; padding:7px 12px; color:var(--red); border-color:var(--red); white-space:nowrap;';
+    delBtn.textContent = 'حذف';
+    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
+    wrap.appendChild(delBtn);
+  }
+  return wrap;
 }
 
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
+function renderUsers(){
+  const list = document.getElementById('usersList');
+  if(allProfiles.length === 0){ list.innerHTML = '<div class="empty">مفيش مستخدمين لسه.</div>'; return; }
   list.innerHTML = '';
-  sorted.forEach((p, i) => {
+  allProfiles.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'ticket';
+    card.style.alignItems = 'center';
+    const info = document.createElement('div');
+    info.className = 'info';
+    info.innerHTML = `<div class="name">${escapeHtml(p.name || p.email)}</div>
+      <div class="status ${p.scanned_at ? 'done':'waiting'}">${p.scanned_at ? 'حضر ✓' : 'لسه ما حضرش'}</div>
+      <span class="role-pill ${p.role}">${p.role === 'admin' ? 'أدمن' : 'مستخدم'}</span>`;
+    card.appendChild(info);
+
+    const actions = document.createElement('div');
+    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
+    if(p.id !== myProfile.id){
+      const roleBtn = document.createElement('button');
+      roleBtn.className = 'ghost';
+      roleBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
+      roleBtn.textContent = p.role === 'admin' ? 'رجّعه مستخدم' : 'رقّيه أدمن';
+      roleBtn.addEventListener('click', ()=>toggleRole(p.id, p.role));
+      actions.appendChild(roleBtn);
+    }else{
+      const me = document.createElement('div');
+      me.className = 'hint';
+      me.style.margin = '0';
+      me.textContent = '(إنت)';
+      actions.appendChild(me);
+    }
+    card.appendChild(actions);
+    list.appendChild(card);
+  });
+}
+
+function renderAttendance(){
+  const list = document.getElementById('attendanceList');
+  if(allProfiles.length === 0){ list.innerHTML = '<div class="empty">مفيش مستخدمين لسه.</div>'; return; }
+  list.innerHTML = '';
+  allProfiles.forEach(p=>{
     const row = document.createElement('div');
     row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
+    row.style.gap = '10px';
+    const statusHtml = p.scanned_at
+      ? `<span style="color:var(--green); font-weight:700;">حضر ✓ (#${rankOf(p.id)})</span>`
+      : `<span style="color:var(--muted);">لسه ما حضرش</span>`;
+    const info = document.createElement('div');
+    info.style.flex = '1';
+    info.innerHTML = `<div class="nm">${escapeHtml(p.name || p.email)}</div><div style="font-size:.78rem; margin-top:2px;">${statusHtml}</div>`;
+    row.appendChild(info);
+    row.appendChild(actionButtonsFor(p));
     list.appendChild(row);
   });
 }
 
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  if(video.readyState === video.HAVE_ENOUGH_DATA){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height);
-    if(code && code.data){
-      handleScan(code.data);
-      return;
-    }
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
-  const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html>    padding:12px 14px;
-    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-    overflow:hidden;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://qkjqwamckryrdcpqotun.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Q3_-IenmxvCHjydmkyIDvA_gdbyoX9Y';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let data = { people: [] }; // each: {id, name, created_at, scanned_at}
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-async function load(){
-  const { data: rows, error } = await db
-    .from('checkin_people')
-    .select('*')
-    .order('created_at', { ascending: true });
-  if(error){
-    console.error('load error', error);
-    return;
-  }
-  data.people = rows || [];
-}
-
-function scanFor(id){
-  const p = data.people.find(p => p.id === id);
-  return (p && p.scanned_at) ? p : null;
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
+function renderRank(){
+  const list = document.getElementById('rankList');
+  if(allProfiles.length === 0){ list.innerHTML = '<div class="empty">مفيش مستخدمين لسه.</div>'; return; }
+  const scanned = allProfiles.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
+  const notScanned = allProfiles.filter(p => !p.scanned_at);
   list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
+  scanned.forEach((p, i)=>{
+    const row = document.createElement('div');
+    row.className = 'rank-row';
+    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
+    const num = document.createElement('div'); num.className='num'; num.textContent = i+1;
+    const nm = document.createElement('div'); nm.className='nm'; nm.textContent = p.name || p.email;
+    const tm = document.createElement('div'); tm.className='tm'; tm.textContent = time;
+    row.appendChild(num); row.appendChild(nm); row.appendChild(tm);
+    row.appendChild(actionButtonsFor(p));
+    list.appendChild(row);
   });
+  if(notScanned.length > 0){
+    const divider = document.createElement('div');
+    divider.style.cssText = 'padding:10px 6px 4px; color:var(--muted); font-size:.78rem; font-weight:700;';
+    divider.textContent = 'لسه ما حضروش';
+    list.appendChild(divider);
+    notScanned.forEach(p=>{
+      const row = document.createElement('div');
+      row.className = 'rank-row';
+      const num = document.createElement('div'); num.className='num'; num.textContent = '-';
+      const nm = document.createElement('div'); nm.className='nm'; nm.textContent = p.name || p.email;
+      row.appendChild(num); row.appendChild(nm);
+      const spacer = document.createElement('div'); spacer.style.flex='1';
+      row.appendChild(spacer);
+      row.appendChild(actionButtonsFor(p));
+      list.appendChild(row);
+    });
+  }
+}
+
+// ---------- ADMIN: ACTIONS ----------
+async function toggleRole(id, currentRole){
+  const newRole = currentRole === 'admin' ? 'user' : 'admin';
+  const { error } = await db.from('profiles').update({ role: newRole }).eq('id', id);
+  if(error){ alert('حصل خطأ: ' + error.message); return; }
+  await loadAllProfiles();
+  renderAdminAll();
 }
 
 async function deletePerson(id, name){
   if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  const { error } = await db.from('checkin_people').delete().eq('id', id);
-  if(error){ alert('حصل خطأ وأنا بامسح، جرب تاني'); console.error(error); return; }
-  await load();
-  renderPeople();
+  const { error } = await db.from('profiles').delete().eq('id', id);
+  if(error){ alert('حصل خطأ: ' + error.message); return; }
+  await loadAllProfiles();
+  renderAdminAll();
 }
 
 async function resetScan(id){
-  const { error } = await db.from('checkin_people').update({ scanned_at: null }).eq('id', id);
+  const { error } = await db.from('profiles').update({ scanned_at: null }).eq('id', id);
   if(error){ console.error(error); return; }
-  await load();
-  renderPeople();
+  await loadAllProfiles();
+  renderAdminAll();
 }
 
-function rankOf(id){
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  const idx = sorted.findIndex(p => p.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.people.filter(p => p.scanned_at).slice().sort((a,b)=> new Date(a.scanned_at) - new Date(b.scanned_at));
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(p.scanned_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(p.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ load().then(renderPeople); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  const addBtn = document.getElementById('addBtn');
-  addBtn.disabled = true;
-  const { error } = await db.from('checkin_people').insert({ id: uid(), name });
-  addBtn.disabled = false;
-  if(error){ alert('حصل خطأ وأنا بضيف الاسم، جرب تاني'); console.error(error); return; }
-  input.value = '';
-  await load();
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  if(video.readyState === video.HAVE_ENOUGH_DATA){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height);
-    if(code && code.data){
-      handleScan(code.data);
-      return;
-    }
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  const box = document.getElementById('scanResult');
-  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
-
-  const { data: rows, error: fetchErr } = await db.from('checkin_people').select('*').eq('id', id).limit(1);
-  if(fetchErr || !rows || rows.length === 0){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const person = rows[0];
-
-  if(person.scanned_at){
-    await load();
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  // conditional update: only succeeds if scanned_at is still null (avoids double-count race)
+async function manualScan(id){
   const nowIso = new Date().toISOString();
-  const { data: updated, error: updErr } = await db
-    .from('checkin_people')
-    .update({ scanned_at: nowIso })
-    .eq('id', id)
-    .is('scanned_at', null)
-    .select();
-
-  await load();
-
-  if(updErr || !updated || updated.length === 0){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r || ''}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
+  const { error } = await db.from('profiles').update({ scanned_at: nowIso }).eq('id', id).is('scanned_at', null);
+  if(error){ console.error(error); return; }
+  await loadAllProfiles();
+  renderAdminAll();
 }
 
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-    overflow:hidden;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const KEY = 'checkin-event-data';
-let data = { people: [], scans: [] };
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-function load(){
-  try{
-    const raw = localStorage.getItem(KEY);
-    if(raw){ data = JSON.parse(raw); }
-  }catch(e){ console.error('load error', e); }
-  if(!data.people) data.people = [];
-  if(!data.scans) data.scans = [];
-  return Promise.resolve();
-}
-
-function save(){
-  try{
-    localStorage.setItem(KEY, JSON.stringify(data));
-  }catch(e){ console.error('storage error', e); }
-  return Promise.resolve();
-}
-
-function scanFor(id){
-  return data.scans.find(s => s.id === id);
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; flex-direction:column; gap:6px; flex-shrink:0;';
-    if(s){
-      const resetBtn = document.createElement('button');
-      resetBtn.className = 'ghost';
-      resetBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; white-space:nowrap;';
-      resetBtn.textContent = 'إعادة المسح';
-      resetBtn.addEventListener('click', ()=>resetScan(p.id));
-      actions.appendChild(resetBtn);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost';
-    delBtn.style.cssText = 'font-size:.7rem; padding:6px 10px; color:var(--red); border-color:var(--red); white-space:nowrap;';
-    delBtn.textContent = 'حذف';
-    delBtn.addEventListener('click', ()=>deletePerson(p.id, p.name));
-    actions.appendChild(delBtn);
-    ticket.appendChild(actions);
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-async function deletePerson(id, name){
-  if(!confirm(`متأكد إنك عايز تشيل "${name}"؟`)) return;
-  data.people = data.people.filter(p => p.id !== id);
-  data.scans = data.scans.filter(s => s.id !== id);
-  await save();
-  renderPeople();
-}
-
-async function resetScan(id){
-  data.scans = data.scans.filter(s => s.id !== id);
-  await save();
-  renderPeople();
-}
-
-function rankOf(id){
-  const sorted = data.scans.slice().sort((a,b)=>a.ts-b.ts);
-  const idx = sorted.findIndex(s => s.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.scans.slice().sort((a,b)=>a.ts-b.ts);
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((s, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(s.ts).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(s.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
+// ---------- ADMIN: TABS ----------
 document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
+  btn.addEventListener('click', async ()=>{
     document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ renderPeople(); }
     if(btn.dataset.tab !== 'scan'){ stopCamera(); }
+    if(btn.dataset.tab === 'users'){ await loadAllProfiles(); renderUsers(); }
+    if(btn.dataset.tab === 'attendance'){ await loadAllProfiles(); renderAttendance(); }
+    if(btn.dataset.tab === 'rank'){ await loadAllProfiles(); renderRank(); }
   });
 });
+document.getElementById('refreshRank').addEventListener('click', async ()=>{ await loadAllProfiles(); renderRank(); });
 
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  await load();
-  data.people.push({ id: uid(), name });
-  await save();
-  input.value = '';
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
+// ---------- ADMIN: CAMERA SCAN ----------
 let stream = null;
 let scanning = false;
 let rafId = null;
@@ -4857,6 +1553,11 @@ document.getElementById('camBtn').addEventListener('click', ()=>{
 });
 
 async function startCamera(){
+  if(typeof jsQR !== 'function'){
+    document.getElementById('scanResult').innerHTML =
+      '<div class="result-flash err"><div class="lbl">مكتبة قراءة الكود مانزلتش صح من الإنترنت. اتأكد إنك متصل بالنت وحدّث الصفحة.</div></div>';
+    return;
+  }
   try{
     stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     const video = document.getElementById('video');
@@ -4867,7 +1568,7 @@ async function startCamera(){
     tick();
   }catch(e){
     document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
+      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة.</div></div>`;
   }
 }
 
@@ -4875,512 +1576,82 @@ function stopCamera(){
   scanning = false;
   if(rafId) cancelAnimationFrame(rafId);
   if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
+  const btn = document.getElementById('camBtn');
+  if(btn) btn.textContent = 'تشغيل الكاميرا';
 }
 
 function tick(){
   if(!scanning) return;
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  if(video.readyState === video.HAVE_ENOUGH_DATA){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height);
-    if(code && code.data){
-      handleScan(code.data);
-      return;
-    }
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-async function handleScan(id){
-  scanning = false;
-  await load();
-  const person = data.people.find(p => p.id === id);
-  const box = document.getElementById('scanResult');
-  if(!person){
-    box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
-    resumeSoon();
-    return;
-  }
-  const existing = scanFor(id);
-  if(existing){
-    const r = rankOf(id);
-    box.innerHTML = `<div class="result-flash dup">
-        <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
-        <div class="lbl">اتسجل قبل كدة</div>
-      </div>`;
-    resumeSoon();
-    return;
-  }
-  data.scans.push({ id, name: person.name, ts: Date.now() });
-  await save();
-  const r = rankOf(id);
-  box.innerHTML = `<div class="result-flash new">
-      <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
-      <div class="lbl">تم التسجيل ✓</div>
-    </div>`;
-  resumeSoon();
-}
-
-function resumeSoon(){
-  setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
-}
-
-load().then(()=>{ renderPeople(); renderRank(); });
-</script>
-</body>
-</html>    border-radius:10px;
-    font-family:inherit;
-    font-size:1rem;
-  }
-  input[type=text]:focus{outline:2px solid var(--gold); outline-offset:1px;}
-  button.primary{
-    background:var(--gold);
-    color:#22190A;
-    border:none;
-    padding:0 20px;
-    border-radius:10px;
-    font-family:inherit;
-    font-weight:800;
-    font-size:.95rem;
-    cursor:pointer;
-  }
-  button.primary:disabled{opacity:.5; cursor:not-allowed;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:9px 14px;
-    border-radius:8px;
-    font-family:inherit;
-    font-size:.8rem;
-    cursor:pointer;
-  }
-
-  .ticket{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background:var(--card-2);
-    border:1px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-    overflow:hidden;
-  }
-  .ticket .qrbox{
-    background:#fff;
-    padding:6px;
-    border-radius:8px;
-    flex-shrink:0;
-    line-height:0;
-  }
-  .ticket .info{flex:1; min-width:0;}
-  .ticket .name{font-weight:700; font-size:1.02rem;}
-  .ticket .status{font-size:.8rem; margin-top:3px;}
-  .status.waiting{color:var(--muted);}
-  .status.done{color:var(--green); font-weight:700;}
-  .rankbadge{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.4rem;
-    color:var(--gold);
-    min-width:44px;
-    text-align:center;
-  }
-
-  #scanArea{
-    position:relative;
-    border-radius:14px;
-    overflow:hidden;
-    background:#000;
-    aspect-ratio:1/1;
-    max-width:340px;
-    margin:0 auto 14px;
-    border:2px solid var(--line);
-  }
-  #scanArea video{width:100%; height:100%; object-fit:cover;}
-  #scanArea .frame{
-    position:absolute; inset:12%;
-    border:2px solid var(--gold);
-    border-radius:10px;
-    box-shadow:0 0 0 999px rgba(0,0,0,.35);
-    pointer-events:none;
-  }
-  .scan-center{text-align:center;}
-
-  .result-flash{
-    text-align:center;
-    padding:22px 16px;
-    border-radius:14px;
-    margin-bottom:16px;
-    animation:pop .35s ease;
-  }
-  .result-flash.new{background:linear-gradient(160deg,#1D3049,#16243A); border:1px solid var(--gold);}
-  .result-flash.dup{background:#231A1A; border:1px solid var(--red);}
-  .result-flash.err{background:#231A1A; border:1px solid var(--red);}
-  .result-flash .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:3rem;
-    color:var(--gold);
-    line-height:1;
-  }
-  .result-flash .lbl{color:var(--muted); font-size:.85rem; margin-top:6px;}
-  .result-flash .nm{font-weight:800; font-size:1.2rem; margin-top:4px;}
-  @keyframes pop{from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;}}
-
-  .rank-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 6px;
-    border-bottom:1px solid var(--line);
-  }
-  .rank-row:last-child{border-bottom:none;}
-  .rank-row .num{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:1.1rem;
-    width:38px;
-    text-align:center;
-    color:var(--gold);
-  }
-  .rank-row:nth-child(1) .num{color:#F4D06F; font-size:1.35rem;}
-  .rank-row:nth-child(2) .num{color:#C9CDD6;}
-  .rank-row:nth-child(3) .num{color:#D08B5A;}
-  .rank-row .nm{flex:1; font-weight:600;}
-  .rank-row .tm{color:var(--muted); font-size:.75rem;}
-
-  .empty{color:var(--muted); text-align:center; padding:26px 10px; font-size:.9rem;}
-  .hint{color:var(--muted); font-size:.8rem; margin-top:8px; line-height:1.6;}
-  .section-title{font-weight:800; margin-bottom:10px; font-size:1rem;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>تسجيل الحضور</h1>
-  <p>سجّل الأسماء، ووزّع الـ QR، وترتيب الوصول بيتحسب أوتوماتيك</p>
-</header>
-
-<nav>
-  <button data-tab="register" class="active">تسجيل الأسماء</button>
-  <button data-tab="scan">مسح QR</button>
-  <button data-tab="rank">الترتيب</button>
-</nav>
-
-<main>
-
-  <!-- REGISTER -->
-  <section class="panel active" id="panel-register">
-    <div class="card">
-      <div class="row">
-        <input type="text" id="nameInput" placeholder="اكتب الاسم هنا" maxlength="60">
-        <button class="primary" id="addBtn">إضافة</button>
-      </div>
-      <p class="hint">كل اسم بياخد كود QR خاص بيه. اطبع الكود أو ابعته للشخص، وهو اللي هيتمسح لما يوصل.</p>
-    </div>
-    <div class="section-title" id="peopleCount">الأسماء المسجّلة</div>
-    <div id="peopleList"></div>
-  </section>
-
-  <!-- SCAN -->
-  <section class="panel" id="panel-scan">
-    <div class="card scan-center">
-      <div id="scanArea">
-        <video id="video" playsinline muted></video>
-        <div class="frame"></div>
-      </div>
-      <button class="primary" id="camBtn" style="width:100%; padding:14px;">تشغيل الكاميرا</button>
-      <p class="hint">وجّه الكاميرا على الكود، هيتقرا لوحده أول ما يبان واضح، من غير ما تحتاج تصوّر.</p>
-      <p class="hint" style="color:var(--gold);">لو الكاميرا مارضتش تفتح: افتح الصفحة من متصفح الموبايل مباشرة (كروم/سفاري) مش من جوه تطبيق Claude، عشان الإذن يشتغل صح.</p>
-      <details style="margin-top:14px; text-align:right;">
-        <summary style="cursor:pointer; color:var(--muted); font-size:.82rem;">أو صوّر الكود بكاميرا الموبايل العادية بدل اللايف</summary>
-        <div style="margin-top:12px;">
-          <button class="ghost" id="captureBtn" style="width:100%;">📷 التقاط صورة للكود</button>
-          <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-        </div>
-      </details>
-      <canvas id="canvas" style="display:none;"></canvas>
-    </div>
-    <div id="scanResult"></div>
-  </section>
-
-  <!-- RANKING -->
-  <section class="panel" id="panel-rank">
-    <div class="card">
-      <div class="section-title" style="margin-bottom:0;">قائمة الترتيب</div>
-    </div>
-    <div class="card" style="padding:6px 14px;">
-      <div id="rankList"></div>
-    </div>
-    <button class="ghost" id="refreshRank">تحديث</button>
-  </section>
-
-</main>
-
-<script>
-const KEY = 'checkin-event-data';
-let data = { people: [], scans: [] };
-
-function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-
-let hasLoadedOnce = false;
-
-function mergePeople(remote){
-  const map = new Map();
-  (data.people||[]).forEach(p=>map.set(p.id,p));
-  (remote||[]).forEach(p=>{ if(!map.has(p.id)) map.set(p.id,p); });
-  return Array.from(map.values());
-}
-
-function mergeScans(remote){
-  const map = new Map();
-  (data.scans||[]).forEach(s=>map.set(s.id,s));
-  (remote||[]).forEach(s=>{
-    const existing = map.get(s.id);
-    if(!existing || s.ts < existing.ts) map.set(s.id, s);
-  });
-  return Array.from(map.values());
-}
-
-async function load(){
   try{
-    const r = await window.storage.get(KEY, true);
-    if(r && r.value){
-      const parsed = JSON.parse(r.value);
-      if(!hasLoadedOnce){
-        data = { people: parsed.people||[], scans: parsed.scans||[] };
-      } else {
-        // merge instead of overwrite so a stale/slow read never erases a write we just made locally
-        data.people = mergePeople(parsed.people);
-        data.scans = mergeScans(parsed.scans);
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    if(video.readyState === video.HAVE_ENOUGH_DATA){
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
+      if(code && code.data){
+        handleScan(code.data.trim());
+        return;
       }
     }
-    hasLoadedOnce = true;
-  }catch(e){
-    console.error('load error', e);
-    if(!hasLoadedOnce){ data = { people: [], scans: [] }; }
-    hasLoadedOnce = true;
-  }
-  if(!data.people) data.people = [];
-  if(!data.scans) data.scans = [];
-}
-
-async function save(){
-  try{
-    await window.storage.set(KEY, JSON.stringify(data), true);
-  }catch(e){ console.error('storage error', e); }
-}
-
-function scanFor(id){
-  return data.scans.find(s => s.id === id);
-}
-
-function renderPeople(){
-  const list = document.getElementById('peopleList');
-  document.getElementById('peopleCount').textContent = `الأسماء المسجّلة (${data.people.length})`;
-  if(data.people.length === 0){
-    list.innerHTML = '<div class="empty">لسه مفيش أسماء متسجّلة. ضيف أول اسم فوق.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  data.people.slice().reverse().forEach(p => {
-    const s = scanFor(p.id);
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qrbox';
-    ticket.appendChild(qrBox);
-    const info = document.createElement('div');
-    info.className = 'info';
-    info.innerHTML = `<div class="name">${escapeHtml(p.name)}</div>
-      <div class="status ${s ? 'done' : 'waiting'}">${s ? 'حضر ✓' : 'لسه ما حضرش'}</div>`;
-    ticket.appendChild(info);
-    if(s){
-      const rank = rankOf(p.id);
-      const badge = document.createElement('div');
-      badge.className = 'rankbadge';
-      badge.textContent = '#' + rank;
-      ticket.appendChild(badge);
-    }
-    list.appendChild(ticket);
-    new QRCode(qrBox, { text: p.id, width: 64, height: 64, correctLevel: QRCode.CorrectLevel.M });
-  });
-}
-
-function rankOf(id){
-  const sorted = data.scans.slice().sort((a,b)=>a.ts-b.ts);
-  const idx = sorted.findIndex(s => s.id === id);
-  return idx === -1 ? null : idx + 1;
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function renderRank(){
-  const list = document.getElementById('rankList');
-  const sorted = data.scans.slice().sort((a,b)=>a.ts-b.ts);
-  if(sorted.length === 0){
-    list.innerHTML = '<div class="empty">لسه محدش اتمسح. الترتيب هيظهر هنا أول ما حد يوصل.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  sorted.forEach((s, i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const time = new Date(s.ts).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
-    row.innerHTML = `<div class="num">${i+1}</div><div class="nm">${escapeHtml(s.name)}</div><div class="tm">${time}</div>`;
-    list.appendChild(row);
-  });
-}
-
-// tabs
-document.querySelectorAll('nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'rank'){ load().then(renderRank); }
-    if(btn.dataset.tab === 'register'){ renderPeople(); }
-    if(btn.dataset.tab !== 'scan'){ stopCamera(); }
-  });
-});
-
-// register
-document.getElementById('addBtn').addEventListener('click', addPerson);
-document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addPerson(); });
-
-async function addPerson(){
-  const input = document.getElementById('nameInput');
-  const name = input.value.trim();
-  if(!name) return;
-  await load();
-  data.people.push({ id: uid(), name });
-  await save();
-  input.value = '';
-  renderPeople();
-}
-
-document.getElementById('refreshRank').addEventListener('click', ()=>{ load().then(renderRank); });
-
-// capture via device camera (native, more reliable inside the app)
-document.getElementById('captureBtn').addEventListener('click', ()=>{
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const img = new Image();
-  img.onload = ()=>{
-    const canvas = document.getElementById('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imgData.data, imgData.width, imgData.height);
-    URL.revokeObjectURL(img.src);
-    e.target.value = '';
-    if(code && code.data){
-      handleScan(code.data.trim());
-    }else{
-      document.getElementById('scanResult').innerHTML =
-        '<div class="result-flash err"><div class="lbl">مقدرتش أقرا كود من الصورة، جرّب تاني وخلي الكود واضح وقريب ومن غير لمعة ضوء عليه</div></div>';
-    }
-  };
-  img.src = URL.createObjectURL(file);
-});
-
-// scanning
-let stream = null;
-let scanning = false;
-let rafId = null;
-
-document.getElementById('camBtn').addEventListener('click', ()=>{
-  if(stream){ stopCamera(); } else { startCamera(); }
-});
-
-async function startCamera(){
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    await video.play();
-    document.getElementById('camBtn').textContent = 'إيقاف الكاميرا';
-    scanning = true;
-    tick();
-  }catch(e){
-    document.getElementById('scanResult').innerHTML =
-      `<div class="result-flash err"><div class="lbl">مش قادر أوصل للكاميرا (${e.name || 'خطأ'}). جرّب تفتح الصفحة من متصفح الموبايل مباشرة مش من جوه تطبيق Claude.</div></div>`;
-  }
-}
-
-function stopCamera(){
-  scanning = false;
-  if(rafId) cancelAnimationFrame(rafId);
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
-  document.getElementById('camBtn').textContent = 'تشغيل الكاميرا';
-}
-
-function tick(){
-  if(!scanning) return;
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  if(video.readyState === video.HAVE_ENOUGH_DATA){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height);
-    if(code && code.data){
-      handleScan(code.data);
-      return;
-    }
-  }
+  }catch(e){ console.error('scan tick error', e); }
   rafId = requestAnimationFrame(tick);
 }
 
 async function handleScan(id){
   scanning = false;
-  await load();
-  const person = data.people.find(p => p.id === id);
   const box = document.getElementById('scanResult');
-  if(!person){
+  box.innerHTML = '<div class="hint" style="text-align:center;">بيتأكد...</div>';
+
+  const { data: rows, error: fetchErr } = await db.from('profiles').select('*').eq('id', id).limit(1);
+  if(fetchErr || !rows || rows.length === 0){
     box.innerHTML = '<div class="result-flash err"><div class="lbl">كود QR مش معروف</div></div>';
     resumeSoon();
     return;
   }
-  const existing = scanFor(id);
-  if(existing){
+  const person = rows[0];
+
+  if(person.scanned_at){
+    await loadAllProfiles();
     const r = rankOf(id);
     box.innerHTML = `<div class="result-flash dup">
         <div class="num">#${r}</div>
-        <div class="nm">${escapeHtml(person.name)}</div>
+        <div class="nm">${escapeHtml(person.name || person.email)}</div>
         <div class="lbl">اتسجل قبل كدة</div>
       </div>`;
     resumeSoon();
     return;
   }
-  data.scans.push({ id, name: person.name, ts: Date.now() });
-  await save();
+
+  const nowIso = new Date().toISOString();
+  const { data: updated, error: updErr } = await db
+    .from('profiles')
+    .update({ scanned_at: nowIso })
+    .eq('id', id)
+    .is('scanned_at', null)
+    .select();
+
+  await loadAllProfiles();
+  renderAdminAll();
+
+  if(updErr || !updated || updated.length === 0){
+    const r = rankOf(id);
+    box.innerHTML = `<div class="result-flash dup">
+        <div class="num">#${r || ''}</div>
+        <div class="nm">${escapeHtml(person.name || person.email)}</div>
+        <div class="lbl">اتسجل قبل كدة</div>
+      </div>`;
+    resumeSoon();
+    return;
+  }
+
   const r = rankOf(id);
   box.innerHTML = `<div class="result-flash new">
       <div class="num">#${r}</div>
-      <div class="nm">${escapeHtml(person.name)}</div>
+      <div class="nm">${escapeHtml(person.name || person.email)}</div>
       <div class="lbl">تم التسجيل ✓</div>
     </div>`;
   resumeSoon();
@@ -5389,8 +1660,6 @@ async function handleScan(id){
 function resumeSoon(){
   setTimeout(()=>{ if(stream){ scanning = true; tick(); } }, 1800);
 }
-
-load().then(()=>{ renderPeople(); renderRank(); });
 </script>
 </body>
 </html>
